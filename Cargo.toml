@@ -1,0 +1,15 @@
+[package]
+name = "dummy-rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "dummy_rs"
+crate-type = ["rlib", "cdylib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+const_format = "0.2.32"
+hex-literal = "0.4.0"
+dbgtools-hexdump = "0.1.0"
