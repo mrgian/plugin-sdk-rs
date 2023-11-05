@@ -9,7 +9,7 @@ pub struct Plugin<'a> {
 }
 
 #[repr(C, packed)]
-pub struct EventData {
+pub struct Event {
     pub ts: u64,
     pub tid: u64,
     pub len: u32,

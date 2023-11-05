@@ -15,7 +15,7 @@ use bindings::*;
 mod plugin;
 use plugin::Functions;
 use plugin::Plugin;
-use plugin::EventData;
+use plugin::Event;
 
 mod macros;
 
@@ -29,7 +29,7 @@ const dummy: Plugin = Plugin {
     id: 999,
 };
 
-static mut event_data: EventData = EventData {
+static mut event: Event = Event {
     ts: u64::MAX,
     tid: u64::MAX,
     len: 55,
@@ -38,7 +38,7 @@ static mut event_data: EventData = EventData {
     reserved: 4,
     data_len: 32,
     plugin_id: 999,
-    data: [0; 32],
+    data: [' ' as u8; 32],
 };
 
 static mut nevents: i32 = 0;
@@ -68,6 +68,12 @@ impl Functions for Plugin<'_> {
     fn next_batch(&self) -> Result<i32, String> {
         unsafe {
             nevents += 1;
+
+            let message = "Hello Rust!";
+
+            for (i, c) in message.chars().enumerate() {
+                event.data[i] = c as u8;
+            }
 
             //generate 10 events
             if nevents >= 10 {

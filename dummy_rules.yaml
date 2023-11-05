@@ -1,6 +1,6 @@
 - rule: Sample dummy-rs plugin rule
   desc: All events
   condition: (evt.num>=0)
-  output: -> rust plugin event (num=%evt.num pluginname=%evt.pluginname)
+  output: -> rust plugin event (num=%evt.num pluginname=%evt.pluginname %evt.plugininfo)
   priority: CRITICAL
   source: dummy-rs-source

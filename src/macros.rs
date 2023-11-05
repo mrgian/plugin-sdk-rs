@@ -136,8 +136,8 @@ macro_rules! plugin {
                         _ => *nevts = 0,
                     }
 
-                    let mut event_data_ptr = (&mut event_data as *mut EventData) as *mut ss_plugin_event;    
-                    *evts = &mut event_data_ptr as *mut *mut ss_plugin_event;
+                    let mut event_ptr = (&mut event as *mut Event) as *mut ss_plugin_event;    
+                    *evts = &mut event_ptr as *mut *mut ss_plugin_event;
 
                     return rc;
                 },
