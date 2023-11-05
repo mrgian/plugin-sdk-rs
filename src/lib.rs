@@ -13,9 +13,7 @@ mod bindings;
 use bindings::*;
 
 mod plugin;
-use plugin::Functions;
-use plugin::Plugin;
-use plugin::Event;
+use plugin::{Common, Source, Extract, Plugin, Event};
 
 mod macros;
 
@@ -43,9 +41,11 @@ static mut event: Event = Event {
 
 static mut nevents: i32 = 0;
 
-plugin!(dummy);
+plugin_common!(dummy);
+plugin_source!(dummy);
+plugin_extract!(dummy);
 
-impl Functions for Plugin<'_> {
+impl Common for Plugin<'_> {
     fn init(&self) {
         println!("Plugin initialized");
     }
@@ -64,13 +64,16 @@ impl Functions for Plugin<'_> {
     fn close(&self) {
         println!("Closing stream event");
     }
+}
 
+impl Source for Plugin<'_> {
     fn next_batch(&self) -> Result<i32, String> {
         unsafe {
             nevents += 1;
 
             let message = "Hello Rust!";
 
+            //write message in event payload
             for (i, c) in message.chars().enumerate() {
                 event.data[i] = c as u8;
             }
@@ -81,5 +84,24 @@ impl Functions for Plugin<'_> {
             } 
         }
         Ok(0) //SS_PLUGIN_SUCCESS
+    }
+}
+
+const fields: &str = r#"
+[
+    {"type": "string","name": "sample.hello","desc": "An hello string"}
+]
+"#;
+const FIELDS: &str = formatcp!("{}\0", fields);
+
+const hello_field: &str = "Hello field!\0";
+
+impl Extract for Plugin<'_> {
+    fn get_fields(&self) -> &str {
+        FIELDS
+    }
+
+    fn extract_fields(&self) -> &str{
+        hello_field
     }
 }

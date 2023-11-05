@@ -21,10 +21,18 @@ pub struct Event {
     pub data: [u8; 32],
 }
 
-pub trait Functions {
+pub trait Common {
     fn init(&self);
     fn destroy(&self);
     fn open(&self) -> Result<(), String>;
     fn close(&self);
+}
+
+pub trait Source {
     fn next_batch(&self) -> Result<i32, String>;
+}
+
+pub trait Extract {
+    fn get_fields(&self) -> &str;
+    fn extract_fields(&self) -> &str;
 }
