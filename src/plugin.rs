@@ -1,3 +1,6 @@
+use crate::DummyState;
+use crate::bindings::*;
+
 pub struct Plugin<'a> {
     pub name: &'a str,
     pub description: &'a str,
@@ -18,21 +21,21 @@ pub struct Event {
     pub reserved: u32,
     pub data_len: u32,
     pub plugin_id: u32,
-    pub data: [u8; 32],
+    //pub data: [u8; 32],
 }
 
 pub trait Common {
-    fn init(&self);
-    fn destroy(&self);
-    fn open(&self) -> Result<(), String>;
-    fn close(&self);
+    fn init(&self) -> Box<DummyState>;
+    fn destroy(&self, state: &mut DummyState);
 }
 
 pub trait Source {
-    fn next_batch(&self) -> Result<i32, String>;
+    fn open(&self, state: &mut DummyState) -> Result<(), String>;
+    fn close(&self, state: &mut DummyState);
+    fn next_batch(&self, state: &mut DummyState) -> Result<i32, String>;
 }
 
 pub trait Extract {
     fn get_fields(&self) -> &str;
-    fn extract_fields(&self) -> &str;
+    fn extract_fields(&self, state: &mut DummyState, fields: &mut [ss_plugin_extract_field]) -> Result<(), String>;
 }

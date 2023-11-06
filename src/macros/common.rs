@@ -65,11 +65,13 @@ macro_rules! plugin_common {
 
         //get_last_error
         #[no_mangle]
-        pub extern "C" fn plugin_get_last_error(
+        pub unsafe extern "C" fn plugin_get_last_error(
             s: *mut ss_plugin_t,
         ) -> *const ::std::os::raw::c_char {
-            //return LAST_ERROR.as_ptr() as *const ::std::os::raw::c_char;
-            return std::ptr::null_mut();
+            //let state = Box::from_raw(s as *mut DummyState);
+            //let error_ptr = (*state).last_error.as_ptr();
+            return std::ptr::null() as *const ::std::os::raw::c_char;
+            //return error_ptr as *const ::std::os::raw::c_char;
         }
 
         //INSTANCE/CAPTURE MANAGEMENT FUNCTIONS
@@ -80,41 +82,15 @@ macro_rules! plugin_common {
             input: *const ss_plugin_init_input,
             rc: *mut ss_plugin_rc,
         ) -> *mut ss_plugin_t {
-            $value.init();
-            return std::ptr::null_mut();
+            let mut raw = Box::into_raw($value.init());
+            return raw as *mut ss_plugin_t;
         }
 
         //destroy
         #[no_mangle]
-        pub extern "C" fn plugin_destroy(s: *mut ss_plugin_t) {
-            $value.destroy();
+        pub unsafe extern "C" fn plugin_destroy(s: *mut ss_plugin_t) {
+            let state = s as *mut DummyState;
+            $value.destroy(state.as_mut().unwrap());
         }
-
-        //open
-        #[no_mangle]
-        pub unsafe extern "C" fn plugin_open(
-            s: *mut ss_plugin_t,
-            params: *const ::std::os::raw::c_char,
-            rc: *mut ss_plugin_rc,
-        ) -> *mut ss_instance_t {
-            let result = $value.open();
-
-            match result {
-                Ok(()) => {
-                    *rc = 0;
-                },
-                Err(error) => {
-                    //todo: set error string
-                }
-            }
-
-            return std::ptr::null_mut();;
-        }
-
-        //close
-        #[no_mangle]
-        pub extern "C" fn plugin_close(s: *mut ss_plugin_t, h: *mut ss_instance_t) {
-            $value.close();
-        }
-    }
+    };
 }
