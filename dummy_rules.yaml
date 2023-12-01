@@ -1,6 +1,6 @@
 - rule: Sample dummy-rs plugin rule
   desc: All events
   condition: (evt.num>=0)
-  output: -> rust plugin event (sample.hello=%sample.hello)
+  output: -> rust plugin event (sample.hello=%sample.hello sample.num=%sample.num)
   priority: CRITICAL
   source: dummy-rs-source

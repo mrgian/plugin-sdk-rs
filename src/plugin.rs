@@ -1,5 +1,5 @@
-use crate::DummyState;
 use crate::bindings::*;
+use crate::PluginState;
 
 pub struct Plugin<'a> {
     pub name: &'a str,
@@ -25,17 +25,21 @@ pub struct Event {
 }
 
 pub trait Common {
-    fn init(&self) -> Box<DummyState>;
-    fn destroy(&self, state: &mut DummyState);
+    fn init(&self) -> Box<PluginState>;
+    fn destroy(&self, state: &mut PluginState);
 }
 
 pub trait Source {
-    fn open(&self, state: &mut DummyState) -> Result<(), String>;
-    fn close(&self, state: &mut DummyState);
-    fn next_batch(&self, state: &mut DummyState) -> Result<i32, String>;
+    fn open(&self, state: &mut PluginState) -> Result<(), String>;
+    fn close(&self, state: &mut PluginState);
+    fn next_batch(&self, state: &mut PluginState) -> Result<i32, String>;
 }
 
 pub trait Extract {
     fn get_fields(&self) -> &str;
-    fn extract_fields(&self, state: &mut DummyState, fields: &mut [ss_plugin_extract_field]) -> Result<(), String>;
+    fn extract_fields(
+        &self,
+       state: &mut PluginState,
+        fields: &mut [ss_plugin_extract_field],
+    ) -> Result<(), String>;
 }

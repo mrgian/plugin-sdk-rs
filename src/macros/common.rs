@@ -68,7 +68,7 @@ macro_rules! plugin_common {
         pub unsafe extern "C" fn plugin_get_last_error(
             s: *mut ss_plugin_t,
         ) -> *const ::std::os::raw::c_char {
-            //let state = Box::from_raw(s as *mut DummyState);
+            //let state = Box::from_raw(s as *mut PluginState);
             //let error_ptr = (*state).last_error.as_ptr();
             return std::ptr::null() as *const ::std::os::raw::c_char;
             //return error_ptr as *const ::std::os::raw::c_char;
@@ -89,7 +89,7 @@ macro_rules! plugin_common {
         //destroy
         #[no_mangle]
         pub unsafe extern "C" fn plugin_destroy(s: *mut ss_plugin_t) {
-            let state = s as *mut DummyState;
+            let state = s as *mut PluginState;
             $value.destroy(state.as_mut().unwrap());
         }
     };
