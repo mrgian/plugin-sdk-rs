@@ -82,6 +82,7 @@ macro_rules! plugin_common {
             input: *const ss_plugin_init_input,
             rc: *mut ss_plugin_rc,
         ) -> *mut ss_plugin_t {
+            *rc = 0;
             let mut raw = Box::into_raw($value.init());
             return raw as *mut ss_plugin_t;
         }
