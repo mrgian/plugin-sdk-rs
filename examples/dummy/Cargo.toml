@@ -1,0 +1,15 @@
+[package]
+name = "dummy"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "dummy"
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+const_format = "0.2.32"
+rand = "0.8.5"
+hex-literal = "0.4.0"
+dbgtools-hexdump = "0.1.0"
+plugin-sdk-rs = { path = "../../sdk" }

@@ -1,26 +1,14 @@
-#![allow(warnings)]
-#![feature(pointer_byte_offsets)]
-#![feature(ptr_sub_ptr)]
-
 use const_format::formatcp;
-use dbgtools_hexdump::{hexdump, Config};
-use hex_literal::hex;
 use rand::Rng;
-use std::error::Error;
-use std::ffi::*;
 
-mod api;
-use api::bindings::*;
-
-mod common;
-mod extract;
-mod source;
-
-mod plugin;
-use plugin::{Common, Event, Extract, Plugin, Source};
+use plugin_sdk_rs::bindings::*;
+use plugin_sdk_rs::plugin::*;
+use plugin_sdk_rs::plugin_common;
+use plugin_sdk_rs::plugin_extract;
+use plugin_sdk_rs::plugin_source;
 
 #[derive(Debug)]
-struct PluginState {
+struct MyPluginState {
     sample_num: u64,
     remaining_events: u32,
     last_error: String,
@@ -40,15 +28,15 @@ const dummy: Plugin = Plugin {
 
 static mut nevents: i32 = 0;
 
-plugin_common!(dummy);
-plugin_source!(dummy);
-plugin_extract!(dummy);
+plugin_common!(dummy, MyPluginState);
+plugin_source!(dummy, MyPluginState);
+plugin_extract!(dummy, MyPluginState);
 
-impl Common for Plugin<'_> {
-    fn init(&self) -> Box<PluginState> {
+impl Common<MyPluginState> for Plugin<'_> {
+    fn init(&self) -> Box<MyPluginState> {
         println!("Initializing plugin...");
 
-        let state = Box::new(PluginState {
+        let state = Box::new(MyPluginState {
             sample_num: 0,
             remaining_events: 10, //generate 10 events
             last_error: "".to_string(),
@@ -59,24 +47,24 @@ impl Common for Plugin<'_> {
         state
     }
 
-    fn destroy(&self, state: &mut PluginState) {
+    fn destroy(&self, _state: &mut MyPluginState) {
         println!("Destroying plugin...");
     }
 }
 
-impl Source for Plugin<'_> {
-    fn open(&self, state: &mut PluginState) -> Result<(), String> {
+impl Source<MyPluginState> for Plugin<'_> {
+    fn open(&self, _state: &mut MyPluginState) -> Result<(), String> {
         println!("Opening event stream...");
 
         //Err("Error while opening")
         Ok(())
     }
 
-    fn close(&self, state: &mut PluginState) {
+    fn close(&self, _state: &mut MyPluginState) {
         println!("Closing event stream...");
     }
 
-    fn next_batch(&self, state: &mut PluginState) -> Result<i32, String> {
+    fn next_batch(&self, state: &mut MyPluginState) -> Result<i32, String> {
         //setting num field to a random number, just to demonstrate you can get this form the state later
         let mut rng = rand::thread_rng();
         state.sample_num = rng.gen::<u64>();
@@ -99,14 +87,14 @@ const fields_schema: &str = r#"
 ]"#;
 const FIELDS_SCHEMA: &str = formatcp!("{}\0", fields_schema);
 
-impl Extract for Plugin<'_> {
+impl Extract<MyPluginState> for Plugin<'_> {
     fn get_fields(&self) -> &str {
         FIELDS_SCHEMA
     }
 
     fn extract_fields(
         &self,
-        state: &mut PluginState,
+        state: &mut MyPluginState,
         fields: &mut [ss_plugin_extract_field],
     ) -> Result<(), String> {
         match fields[0].field_id {

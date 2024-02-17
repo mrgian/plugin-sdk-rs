@@ -1,5 +1,4 @@
-use crate::api::bindings::*;
-use crate::PluginState;
+use crate::bindings::*;
 
 pub struct Plugin<'a> {
     pub name: &'a str,
@@ -24,22 +23,22 @@ pub struct Event {
     //pub data: [u8; 32],
 }
 
-pub trait Common {
-    fn init(&self) -> Box<PluginState>;
-    fn destroy(&self, state: &mut PluginState);
+pub trait Common<T> {
+    fn init(&self) -> Box<T>;
+    fn destroy(&self, state: &mut T);
 }
 
-pub trait Source {
-    fn open(&self, state: &mut PluginState) -> Result<(), String>;
-    fn close(&self, state: &mut PluginState);
-    fn next_batch(&self, state: &mut PluginState) -> Result<i32, String>;
+pub trait Source<T> {
+    fn open(&self, state: &mut T) -> Result<(), String>;
+    fn close(&self, state: &mut T);
+    fn next_batch(&self, state: &mut T) -> Result<i32, String>;
 }
 
-pub trait Extract {
+pub trait Extract<T> {
     fn get_fields(&self) -> &str;
     fn extract_fields(
         &self,
-       state: &mut PluginState,
+       state: &mut T,
         fields: &mut [ss_plugin_extract_field],
     ) -> Result<(), String>;
 }

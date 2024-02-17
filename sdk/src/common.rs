@@ -1,10 +1,10 @@
 #[macro_export]
 macro_rules! plugin_common {
-    ($value:expr) => {
+    ($plugin:expr,$type:ty) => {
         //INFO FUNCTIONS
 
         //get_required_api_version
-        const required_api_version: &str = $value.required_api_version;
+        const required_api_version: &str = $plugin.required_api_version;
         const REQUIRED_API_VERSION: &str = formatcp!("{}\0", required_api_version);
 
         #[no_mangle]
@@ -13,7 +13,7 @@ macro_rules! plugin_common {
         }
 
         //get_name
-        const name: &str = $value.name;
+        const name: &str = $plugin.name;
         const NAME: &str = formatcp!("{}\0", name);
 
         #[no_mangle]
@@ -22,7 +22,7 @@ macro_rules! plugin_common {
         }
 
         //get_description
-        const description: &str = $value.description;
+        const description: &str = $plugin.description;
         const DESCRIPTION: &str = formatcp!("{}\0", description);
 
         #[no_mangle]
@@ -31,7 +31,7 @@ macro_rules! plugin_common {
         }
 
         //get_contact
-        const contact: &str = $value.contact;
+        const contact: &str = $plugin.contact;
         const CONTACT: &str = formatcp!("{}\0", contact);
 
         #[no_mangle]
@@ -40,7 +40,7 @@ macro_rules! plugin_common {
         }
 
         //get_version
-        const version: &str = $value.version;
+        const version: &str = $plugin.version;
         const VERSION: &str = formatcp!("{}\0", version);
 
         #[no_mangle]
@@ -49,7 +49,7 @@ macro_rules! plugin_common {
         }
 
         //get_event_source
-        const event_source: &str = $value.event_source;
+        const event_source: &str = $plugin.event_source;
         const EVENT_SOURCE: &str = formatcp!("{}\0", event_source);
 
         #[no_mangle]
@@ -60,7 +60,7 @@ macro_rules! plugin_common {
         //get_id
         #[no_mangle]
         pub extern "C" fn plugin_get_id() -> u32 {
-            return $value.id;
+            return $plugin.id;
         }
 
         //get_last_error
@@ -83,15 +83,15 @@ macro_rules! plugin_common {
             rc: *mut ss_plugin_rc,
         ) -> *mut ss_plugin_t {
             *rc = 0;
-            let mut raw = Box::into_raw($value.init());
+            let mut raw = Box::into_raw($plugin.init());
             return raw as *mut ss_plugin_t;
         }
 
         //destroy
         #[no_mangle]
         pub unsafe extern "C" fn plugin_destroy(s: *mut ss_plugin_t) {
-            let state = s as *mut PluginState;
-            $value.destroy(state.as_mut().unwrap());
+            let state = s as *mut $type;
+            $plugin.destroy(state.as_mut().unwrap());
         }
     };
 }
