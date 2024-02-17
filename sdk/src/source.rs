@@ -1,6 +1,6 @@
 #[macro_export]
 macro_rules! plugin_source {
-    ($plugin:expr,$type:ty) => {
+    ($type:ty) => {
         //EVENTS FUNCTIONS
 
         static mut event: Event = Event {
@@ -23,7 +23,7 @@ macro_rules! plugin_source {
             rc: *mut ss_plugin_rc,
         ) -> *mut ss_instance_t {
             let state = s as *mut $type;
-            let result = $plugin.open(state.as_mut().unwrap());
+            let result = PLUGIN.open(state.as_mut().unwrap());
 
             match result {
                 Ok(()) => {
@@ -41,7 +41,7 @@ macro_rules! plugin_source {
         #[no_mangle]
         pub unsafe extern "C" fn plugin_close<T>(s: *mut ss_plugin_t, h: *mut ss_instance_t) {
             let state = s as *mut $type;
-            $plugin.close(state.as_mut().unwrap());
+            PLUGIN.close(state.as_mut().unwrap());
         }
 
         //next_batch
@@ -53,7 +53,7 @@ macro_rules! plugin_source {
             evts: *mut *mut *mut ss_plugin_event,
         ) -> ss_plugin_rc {
             let state = s as *mut $type;
-            let result = $plugin.next_batch(state.as_mut().unwrap());
+            let result = PLUGIN.next_batch(state.as_mut().unwrap());
 
             match result {
                 Ok(rc) => {

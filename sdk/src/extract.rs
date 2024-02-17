@@ -1,12 +1,12 @@
 #[macro_export]
 macro_rules! plugin_extract {
-    ($plugin:expr,$type:ty) => {
+    ($type:ty) => {
         //FIELD EXTRACTION FUNCTIONS
 
         //get_fields
         #[no_mangle]
         pub unsafe extern "C" fn plugin_get_fields() -> *const ::std::os::raw::c_char {
-            return $plugin.get_fields().as_ptr() as *const ::std::os::raw::c_char;
+            return PLUGIN.get_fields().as_ptr() as *const ::std::os::raw::c_char;
         }
 
         //extract_fields
@@ -20,7 +20,7 @@ macro_rules! plugin_extract {
 
             let num_fields = (*in_).num_fields as usize;
             let fields = std::slice::from_raw_parts_mut((*in_).fields, num_fields);
-            let result = $plugin.extract_fields(state.as_mut().unwrap(), fields);
+            let result = PLUGIN.extract_fields(state.as_mut().unwrap(), fields);
 
             return 0;
         }

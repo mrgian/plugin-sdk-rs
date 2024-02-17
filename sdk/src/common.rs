@@ -1,66 +1,48 @@
 #[macro_export]
 macro_rules! plugin_common {
-    ($plugin:expr,$type:ty) => {
+    ($type:ty) => {
         //INFO FUNCTIONS
 
         //get_required_api_version
-        const required_api_version: &str = $plugin.required_api_version;
-        const REQUIRED_API_VERSION: &str = formatcp!("{}\0", required_api_version);
-
         #[no_mangle]
         pub extern "C" fn plugin_get_required_api_version() -> *const ::std::os::raw::c_char {
-            return REQUIRED_API_VERSION.as_ptr() as *const ::std::os::raw::c_char;
+            return PLUGIN.required_api_version.as_ptr() as *const ::std::os::raw::c_char;
         }
 
         //get_name
-        const name: &str = $plugin.name;
-        const NAME: &str = formatcp!("{}\0", name);
-
         #[no_mangle]
         pub extern "C" fn plugin_get_name() -> *const ::std::os::raw::c_char {
-            return NAME.as_ptr() as *const ::std::os::raw::c_char;
+            return PLUGIN.name.as_ptr() as *const ::std::os::raw::c_char;
         }
 
         //get_description
-        const description: &str = $plugin.description;
-        const DESCRIPTION: &str = formatcp!("{}\0", description);
-
         #[no_mangle]
         pub extern "C" fn plugin_get_description() -> *const ::std::os::raw::c_char {
-            return DESCRIPTION.as_ptr() as *const ::std::os::raw::c_char;
+            return PLUGIN.description.as_ptr() as *const ::std::os::raw::c_char;
         }
 
         //get_contact
-        const contact: &str = $plugin.contact;
-        const CONTACT: &str = formatcp!("{}\0", contact);
-
         #[no_mangle]
         pub extern "C" fn plugin_get_contact() -> *const ::std::os::raw::c_char {
-            return CONTACT.as_ptr() as *const ::std::os::raw::c_char;
+            return PLUGIN.contact.as_ptr() as *const ::std::os::raw::c_char;
         }
 
         //get_version
-        const version: &str = $plugin.version;
-        const VERSION: &str = formatcp!("{}\0", version);
-
         #[no_mangle]
         pub extern "C" fn plugin_get_version() -> *const ::std::os::raw::c_char {
-            return VERSION.as_ptr() as *const ::std::os::raw::c_char;
+            return PLUGIN.version.as_ptr() as *const ::std::os::raw::c_char;
         }
 
         //get_event_source
-        const event_source: &str = $plugin.event_source;
-        const EVENT_SOURCE: &str = formatcp!("{}\0", event_source);
-
         #[no_mangle]
         pub extern "C" fn plugin_get_event_source() -> *const ::std::os::raw::c_char {
-            return EVENT_SOURCE.as_ptr() as *const ::std::os::raw::c_char;
+            return PLUGIN.event_source.as_ptr() as *const ::std::os::raw::c_char;
         }
 
         //get_id
         #[no_mangle]
         pub extern "C" fn plugin_get_id() -> u32 {
-            return $plugin.id;
+            return PLUGIN.id;
         }
 
         //get_last_error
@@ -83,7 +65,7 @@ macro_rules! plugin_common {
             rc: *mut ss_plugin_rc,
         ) -> *mut ss_plugin_t {
             *rc = 0;
-            let mut raw = Box::into_raw($plugin.init());
+            let mut raw = Box::into_raw(PLUGIN.init());
             return raw as *mut ss_plugin_t;
         }
 
@@ -91,7 +73,7 @@ macro_rules! plugin_common {
         #[no_mangle]
         pub unsafe extern "C" fn plugin_destroy(s: *mut ss_plugin_t) {
             let state = s as *mut $type;
-            $plugin.destroy(state.as_mut().unwrap());
+            PLUGIN.destroy(state.as_mut().unwrap());
         }
     };
 }

@@ -1,5 +1,20 @@
 use crate::bindings::*;
 
+#[macro_export]
+macro_rules! plugin_info {
+    ($name:expr, $description:expr, $contact:expr, $version:expr, $required_api_version:expr, $event_source:expr, $id:expr) => {
+        const PLUGIN: Plugin = Plugin {
+            name: formatcp!("{}\0", $name),
+            description: formatcp!("{}\0", $description),
+            contact: formatcp!("{}\0", $contact),
+            version: formatcp!("{}\0", $version),
+            required_api_version: formatcp!("{}\0", $required_api_version),
+            event_source: formatcp!("{}\0", $event_source),
+            id: $id
+        };
+    }
+}
+
 pub struct Plugin<'a> {
     pub name: &'a str,
     pub description: &'a str,
