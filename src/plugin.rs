@@ -1,4 +1,4 @@
-use crate::bindings::*;
+use crate::api::bindings::*;
 use crate::PluginState;
 
 pub struct Plugin<'a> {

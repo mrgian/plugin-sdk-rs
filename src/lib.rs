@@ -9,13 +9,15 @@ use rand::Rng;
 use std::error::Error;
 use std::ffi::*;
 
-mod bindings;
-use bindings::*;
+mod api;
+use api::bindings::*;
+
+mod common;
+mod extract;
+mod source;
 
 mod plugin;
 use plugin::{Common, Event, Extract, Plugin, Source};
-
-mod macros;
 
 #[derive(Debug)]
 struct PluginState {
