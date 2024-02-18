@@ -17,11 +17,13 @@ macro_rules! plugin_source {
 
         //open
         #[no_mangle]
-        pub unsafe extern "C" fn plugin_open<T>(
+        pub unsafe extern "C" fn plugin_open(
             s: *mut ss_plugin_t,
             params: *const ::std::os::raw::c_char,
             rc: *mut ss_plugin_rc,
         ) -> *mut ss_instance_t {
+
+            println!("test");
             let state = s as *mut $type;
             let result = PLUGIN.open(state.as_mut().unwrap());
 
@@ -39,14 +41,14 @@ macro_rules! plugin_source {
 
         //close
         #[no_mangle]
-        pub unsafe extern "C" fn plugin_close<T>(s: *mut ss_plugin_t, h: *mut ss_instance_t) {
+        pub unsafe extern "C" fn plugin_close(s: *mut ss_plugin_t, h: *mut ss_instance_t) {
             let state = s as *mut $type;
             PLUGIN.close(state.as_mut().unwrap());
         }
 
         //next_batch
         #[no_mangle]
-        pub unsafe extern "C" fn plugin_next_batch<T>(
+        pub unsafe extern "C" fn plugin_next_batch(
             s: *mut ss_plugin_t,
             h: *mut ss_instance_t,
             nevts: *mut u32,

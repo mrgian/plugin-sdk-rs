@@ -18,12 +18,12 @@ struct DummyState {
 }
 
 plugin_info!(
-    "dummy-rs",                             //name
+    "dummy",                                //name
     "Falco dummy plugin written in Rust",   //description
     "Gianmatteo Palmieri <mail@gian.im>",   //author
     "0.0.0",                                //version
     "3.0.0",                                //required api version
-    "dummy-rs-source",                      //event source
+    "dummy-source",                         //event source
     999                                     //id
 );
 
