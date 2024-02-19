@@ -22,8 +22,6 @@ macro_rules! plugin_source {
             params: *const ::std::os::raw::c_char,
             rc: *mut ss_plugin_rc,
         ) -> *mut ss_instance_t {
-
-            println!("test");
             let state = s as *mut $type;
             let result = PLUGIN.open(state.as_mut().unwrap());
 
